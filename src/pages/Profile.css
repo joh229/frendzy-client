@@ -1,0 +1,224 @@
+/* src/pages/Profile.css */
+
+/* ================= ROOT ================= */
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --danger: #ef4444;
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text-dark: #0f172a;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
+  --radius: 18px;
+  --shadow: 0 14px 36px rgba(0, 0, 0, 0.08);
+}
+
+/* ================= PAGE ================= */
+.profile-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  padding: 28px;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ================= HEADER ================= */
+.profile-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 20px 30px;
+  border-radius: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto 30px auto;
+  max-width: 760px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #4f46e5;
+  letter-spacing: 0.5px;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 16px;
+}
+
+/* ================= BUTTONS ================= */
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.4px;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+}
+
+.home-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+
+/* ================= PROFILE CARD ================= */
+.profile-card {
+  background: var(--card);
+  padding: 28px;
+  border-radius: 22px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.08),
+    rgba(139, 92, 246, 0.08)
+  );
+  z-index: 0;
+}
+
+.profile-card * {
+  position: relative;
+  z-index: 1;
+}
+
+.profile-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.profile-card h3 {
+  margin: 8px 0 4px;
+  color: var(--text-dark);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.profile-card p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+/* ================= FOLLOW INFO ================= */
+.follow-info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.follow-info span {
+  background: #eef2ff;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+/* ================= MY POSTS ================= */
+.my-posts-title {
+  margin: 24px 0 14px;
+  color: var(--text-dark);
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* ================= POST CARD ================= */
+.profile-post-card {
+  background: var(--card);
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+  transition: 0.25s ease;
+}
+
+.profile-post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+.profile-post-card p {
+  font-size: 14px;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+/* ================= POST IMAGE ================= */
+.profile-post-image {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ================= POST ACTIONS ================= */
+.profile-post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 16px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 13px;
+  }
+
+  .profile-avatar {
+    width: 110px;
+    height: 110px;
+  }
+}
