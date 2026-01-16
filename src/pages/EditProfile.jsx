@@ -1,8 +1,6 @@
 // src/pages/EditProfile.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import App from "../App";
 import API from "../api";
 
 export default function EditProfile() {
@@ -65,44 +63,44 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-4">
-      <div className="w-full max-w-xl bg-slate-800/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl">
-        <h2 className="text-2xl md:text-3xl font-bold text-indigo-400 text-center mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-3 sm:px-6 py-10">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-slate-800/80 backdrop-blur-xl p-5 sm:p-8 rounded-2xl shadow-2xl">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-400 text-center mb-6">
           Edit Profile
         </h2>
 
-        {/* ================= PROFILE IMAGE ================= */}
+        {/* PROFILE IMAGE */}
         <div className="flex flex-col items-center mb-6">
           {preview && (
             <img
               src={preview}
               alt="Profile"
-              className="w-28 h-28 rounded-full object-cover border-4 border-indigo-500 shadow-lg"
+              className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-indigo-500 shadow-lg"
             />
           )}
 
-          <label className="mt-4 cursor-pointer bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
+          <label className="mt-4 cursor-pointer bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition">
             Change Photo
             <input type="file" hidden onChange={handleImageChange} />
           </label>
         </div>
 
-        {/* ================= USERNAME ================= */}
+        {/* USERNAME */}
         <div className="mb-5">
-          <label className="block text-slate-300 text-sm font-semibold mb-1">
+          <label className="block text-slate-300 text-xs sm:text-sm font-semibold mb-1">
             Username
           </label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter username"
-            className="w-full px-4 py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition text-sm sm:text-base"
           />
         </div>
 
-        {/* ================= BIO ================= */}
+        {/* BIO */}
         <div className="mb-6">
-          <label className="block text-slate-300 text-sm font-semibold mb-1">
+          <label className="block text-slate-300 text-xs sm:text-sm font-semibold mb-1">
             Bio
           </label>
           <textarea
@@ -111,25 +109,25 @@ export default function EditProfile() {
             placeholder="Write something about you..."
             maxLength={150}
             rows={4}
-            className="w-full px-4 py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition resize-none"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition resize-none text-sm sm:text-base"
           />
           <small className="text-slate-400 text-xs block text-right mt-1">
             {bio.length}/150
           </small>
         </div>
 
-        {/* ================= ACTION BUTTONS ================= */}
-        <div className="flex gap-4">
+        {/* ACTION BUTTONS */}
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={updateProfile}
-            className="flex-1 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-semibold shadow-lg hover:shadow-indigo-500/40 transition"
+            className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-indigo-500/40 transition"
           >
             Save Changes
           </button>
 
           <button
             onClick={() => navigate("/profile")}
-            className="flex-1 py-3 rounded-full bg-slate-700 text-white font-semibold border border-slate-600 hover:bg-slate-600 transition"
+            className="w-full py-2.5 sm:py-3 rounded-full bg-slate-700 text-white text-sm sm:text-base font-semibold border border-slate-600 hover:bg-slate-600 transition"
           >
             Cancel
           </button>
