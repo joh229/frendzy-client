@@ -6,7 +6,9 @@ import API from "../api";
 export default function EditProfile() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const AUTH_API = "/api/auth";
+
+  // IMPORTANT FIX: Do NOT add /api here because api.js already has /api in baseURL
+  const AUTH_API = "/auth";
 
   const DEFAULT_AVATAR =
     "https://res.cloudinary.com/demo/image/upload/v1690000000/default-avatar.png";
@@ -119,6 +121,7 @@ export default function EditProfile() {
         {/* ACTION BUTTONS */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
+            type="button"
             onClick={updateProfile}
             className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-indigo-500/40 transition"
           >
@@ -126,6 +129,7 @@ export default function EditProfile() {
           </button>
 
           <button
+            type="button"
             onClick={() => navigate("/profile")}
             className="w-full py-2.5 sm:py-3 rounded-full bg-slate-700 text-white text-sm sm:text-base font-semibold border border-slate-600 hover:bg-slate-600 transition"
           >

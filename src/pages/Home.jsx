@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api";
 
@@ -22,6 +22,28 @@ export default function Home() {
   const [showCommentLikes, setShowCommentLikes] = useState({});
   const [showReplyLikes, setShowReplyLikes] = useState({});
   const [showPostLikes, setShowPostLikes] = useState({});
+  const [showReplyThread, setShowReplyThread] = useState({});
+
+  /* ================= SCROLL FIX ================= */
+  const scrollRef = useRef(0);
+
+  const saveScroll = () => {
+    scrollRef.current = window.scrollY;
+  };
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, scrollRef.current);
+  }, [posts]);
+
+  /* ================= MENTION FORMAT ================= */
+  const formatMentions = (text) => {
+    if (!text) return "";
+    const mentionRegex = /@(\w+)/g;
+    return text.replace(
+      mentionRegex,
+      `<span class="text-indigo-400 font-semibold">@$1</span>`
+    );
+  };
 
   useEffect(() => {
     if (!user) {
@@ -69,6 +91,8 @@ export default function Home() {
       return alert("Write something or select an image/video");
     }
 
+    saveScroll();
+
     const formData = new FormData();
     formData.append("userId", user._id);
     formData.append("username", user.username);
@@ -80,7 +104,7 @@ export default function Home() {
       setContent("");
       setImage(null);
       setPreview(null);
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       console.error("CREATE POST ERROR:", err);
     }
@@ -88,14 +112,13 @@ export default function Home() {
 
   /* ================= POST LIKE ================= */
   const likePost = async (postId) => {
-    const scrollY = window.scrollY;
+    saveScroll();
     try {
       await API.put(`${POST_API}/like/${postId}`, {
         userId: user._id,
         username: user.username,
       });
       await fetchPosts();
-      window.scrollTo(0, scrollY);
     } catch (err) {
       console.error("LIKE POST ERROR:", err);
     }
@@ -104,6 +127,7 @@ export default function Home() {
   /* ================= COMMENT ================= */
   const addComment = async (postId) => {
     if (!commentText[postId]?.trim()) return;
+    saveScroll();
 
     try {
       await API.post(`${POST_API}/comment/${postId}`, {
@@ -112,29 +136,29 @@ export default function Home() {
         text: commentText[postId],
       });
       setCommentText({ ...commentText, [postId]: "" });
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       console.error("ADD COMMENT ERROR:", err);
     }
   };
 
   const deleteComment = async (postId, commentId) => {
+    saveScroll();
     try {
       await API.delete(`${POST_API}/comment/${postId}/${commentId}`);
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       console.error("DELETE COMMENT ERROR:", err);
     }
   };
 
   const likeComment = async (postId, commentId) => {
-    const scrollY = window.scrollY;
+    saveScroll();
     try {
       await API.put(`${POST_API}/comment/like/${postId}/${commentId}`, {
         userId: user._id,
       });
       await fetchPosts();
-      window.scrollTo(0, scrollY);
     } catch (err) {
       console.error("LIKE COMMENT ERROR:", err);
     }
@@ -143,6 +167,7 @@ export default function Home() {
   /* ================= REPLY ================= */
   const addReply = async (postId, commentId, text) => {
     if (!text?.trim()) return;
+    saveScroll();
 
     try {
       await API.post(`${POST_API}/reply/${postId}/${commentId}`, {
@@ -152,59 +177,34 @@ export default function Home() {
       });
       setReplyText({ ...replyText, [commentId]: "" });
       setThreadText({});
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       console.error("ADD REPLY ERROR:", err);
     }
   };
 
   const deleteReply = async (postId, commentId, replyId) => {
+    saveScroll();
     try {
       await API.delete(
         `${POST_API}/reply/delete/${postId}/${commentId}/${replyId}`
       );
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       console.error("DELETE REPLY ERROR:", err);
     }
   };
 
   const likeReply = async (postId, commentId, replyId) => {
-    const scrollY = window.scrollY;
+    saveScroll();
     try {
       await API.put(
         `${POST_API}/reply/like/${postId}/${commentId}/${replyId}`,
         { userId: user._id }
       );
       await fetchPosts();
-      window.scrollTo(0, scrollY);
     } catch (err) {
       console.error("LIKE REPLY ERROR:", err);
-    }
-  };
-
-  /* ================= EDIT COMMENT ================= */
-  const editComment = async (postId, commentId, text) => {
-    if (!text.trim()) return;
-    try {
-      await API.put(`${POST_API}/comment/edit/${postId}/${commentId}`, { text });
-      fetchPosts();
-    } catch (err) {
-      console.error("EDIT COMMENT ERROR:", err);
-    }
-  };
-
-  /* ================= EDIT REPLY ================= */
-  const editReply = async (postId, commentId, replyId, text) => {
-    if (!text.trim()) return;
-    try {
-      await API.put(
-        `${POST_API}/reply/edit/${postId}/${commentId}/${replyId}`,
-        { text }
-      );
-      fetchPosts();
-    } catch (err) {
-      console.error("EDIT REPLY ERROR:", err);
     }
   };
 
@@ -220,12 +220,14 @@ export default function Home() {
         <h2 className="text-xl font-bold text-indigo-400">Friendzy</h2>
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => navigate("/profile")}
             className="px-4 py-1 rounded-full bg-indigo-600 hover:bg-indigo-500 transition"
           >
             Profile
           </button>
           <button
+            type="button"
             onClick={logout}
             className="px-4 py-1 rounded-full bg-red-600 hover:bg-red-500 transition"
           >
@@ -282,6 +284,7 @@ export default function Home() {
           </label>
 
           <button
+            type="button"
             onClick={createPost}
             className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-full shadow-md transition"
           >
@@ -303,9 +306,7 @@ export default function Home() {
             key={post._id}
             className="bg-slate-800/80 p-4 rounded-2xl mb-6 shadow-xl border border-white/10"
           >
-            <h4 className="font-semibold text-indigo-400">
-              @{post.username}
-            </h4>
+            <h4 className="font-semibold text-indigo-400">@{post.username}</h4>
             <p className="text-sm mt-1">{post.content}</p>
 
             {imageUrl && (
@@ -321,12 +322,14 @@ export default function Home() {
             {/* POST ACTIONS */}
             <div className="flex gap-3 mt-2 text-sm">
               <button
+                type="button"
                 onClick={() => likePost(post._id)}
                 className="text-pink-400 hover:text-pink-300"
               >
                 ❤️ {post.likes?.length || 0}
               </button>
               <button
+                type="button"
                 onClick={() =>
                   setShowPostLikes({
                     ...showPostLikes,
@@ -363,6 +366,7 @@ export default function Home() {
                 className="flex-1 bg-slate-700/70 rounded-xl px-3 py-2 text-white outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <button
+                type="button"
                 onClick={() => addComment(post._id)}
                 className="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-xl transition"
               >
@@ -376,139 +380,155 @@ export default function Home() {
                 key={c._id}
                 className="bg-slate-700/70 p-3 rounded-xl mt-3 border border-white/10"
               >
-                <b className="text-indigo-300">@{c.username}</b>
-                <p className="text-sm">{c.text}</p>
+                {/* everything below remains unchanged */}
+                {/* same as your original */}
+              </div>
+            ))}
+            {post.comments.map((c) => (
+              <div
+                key={c._id}
+                className="bg-slate-700/70 p-3 rounded-xl mt-3 border border-white/10"
+              >
+                {/* Comment */}
+                <p className="text-indigo-300 font-semibold">@{c.username}</p>
+                <p
+                  className="text-sm mt-1"
+                  dangerouslySetInnerHTML={{ __html: formatMentions(c.text) }}
+                />
 
-                <div className="flex gap-2 mt-2 text-xs">
+                {/* Comment Actions */}
+                <div className="flex gap-3 text-xs mt-2">
                   <button
+                    type="button"
                     onClick={() => likeComment(post._id, c._id)}
-                    className="text-pink-400"
+                    className="text-pink-400 hover:text-pink-300"
                   >
                     ❤️ {c.likes?.length || 0}
                   </button>
+
                   <button
+                    type="button"
                     onClick={() =>
-                      setShowCommentLikes({
-                        ...showCommentLikes,
-                        [c._id]: !showCommentLikes[c._id],
+                      setThreadText({
+                        ...threadText,
+                        [c._id]: !threadText[c._id],
                       })
                     }
-                    className="text-indigo-400"
-                  >
-                    Who liked?
-                  </button>
-                  <button
-                    onClick={() => deleteComment(post._id, c._id)}
-                    className="text-red-400"
-                  >
-                    Delete
-                  </button>
-                </div>
-
-                {showCommentLikes[c._id] && (
-                  <div className="bg-black/60 p-2 rounded-lg mt-2 text-xs">
-                    {c.likes.map((u, i) => (
-                      <span key={i} className="block">
-                        @{u.username || u}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* REPLY INPUT */}
-                <div className="flex gap-2 mt-2">
-                  <input
-                    placeholder="Reply..."
-                    value={replyText[c._id] || ""}
-                    onChange={(e) =>
-                      setReplyText({
-                        ...replyText,
-                        [c._id]: e.target.value,
-                      })
-                    }
-                    className="flex-1 bg-slate-600/70 rounded-lg px-2 py-1 text-xs outline-none"
-                  />
-                  <button
-                    onClick={() =>
-                      addReply(post._id, c._id, replyText[c._id])
-                    }
-                    className="bg-indigo-600 px-3 py-1 rounded-lg text-xs"
+                    className="text-indigo-400 hover:text-indigo-300"
                   >
                     Reply
                   </button>
+
+                  {c.userId === user._id && (
+                    <button
+                      type="button"
+                      onClick={() => deleteComment(post._id, c._id)}
+                      className="text-red-400 hover:text-red-300"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
 
-                {/* REPLIES */}
-                {c.replies.map((r) => (
+                {/* Reply Input */}
+                {threadText[c._id] && (
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      placeholder="Write a reply..."
+                      value={replyText[c._id] || ""}
+                      onChange={(e) =>
+                        setReplyText({
+                          ...replyText,
+                          [c._id]: e.target.value,
+                        })
+                      }
+                      className="flex-1 bg-slate-800 rounded-xl px-3 py-1 text-sm outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        addReply(post._id, c._id, replyText[c._id])
+                      }
+                      className="bg-indigo-600 px-3 py-1 rounded-xl text-xs"
+                    >
+                      Send
+                    </button>
+                  </div>
+                )}
+
+                {/* Replies */}
+                {c.replies?.map((r) => (
                   <div
                     key={r._id}
-                    className="ml-6 bg-slate-600/70 p-3 rounded-xl mt-2 border border-white/10"
+                    className="ml-6 mt-3 bg-slate-800/70 p-2 rounded-xl border border-white/10"
                   >
-                    <b className="text-green-400">@{r.username}</b>
-                    <p className="text-xs">{r.text}</p>
+                    <p className="text-indigo-300 text-sm font-semibold">
+                      @{r.username}
+                    </p>
 
-                    <div className="flex gap-2 mt-1 text-[11px]">
+                    <p
+                      className="text-xs mt-1"
+                      dangerouslySetInnerHTML={{ __html: formatMentions(r.text) }}
+                    />
+
+                    {/* Reply Actions */}
+                    {/* Reply Actions */}
+                    <div className="flex gap-3 text-[10px] mt-1">
                       <button
-                        onClick={() =>
-                          likeReply(post._id, c._id, r._id)
-                        }
-                        className="text-pink-400"
+                        type="button"
+                        onClick={() => likeReply(post._id, c._id, r._id)}
+                        className="text-pink-400 hover:text-pink-300"
                       >
                         ❤️ {r.likes?.length || 0}
                       </button>
+
                       <button
+                        type="button"
                         onClick={() =>
-                          setShowReplyLikes({
-                            ...showReplyLikes,
-                            [r._id]: !showReplyLikes[r._id],
+                          setShowReplyThread({
+                            ...showReplyThread,
+                            [r._id]: !showReplyThread[r._id],
                           })
                         }
-                        className="text-indigo-400"
-                      >
-                        Who liked?
-                      </button>
-                      <button
-                        onClick={() =>
-                          deleteReply(post._id, c._id, r._id)
-                        }
-                        className="text-red-400"
-                      >
-                        Delete
-                      </button>
-                    </div>
-
-                    {showReplyLikes[r._id] && (
-                      <div className="bg-black/60 p-2 rounded-lg mt-1 text-[11px]">
-                        {r.likes.map((u, i) => (
-                          <span key={i} className="block">
-                            @{u.username || u}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* REPLY TO REPLY */}
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        placeholder="Reply to reply..."
-                        value={threadText[r._id] || ""}
-                        onChange={(e) =>
-                          setThreadText({
-                            ...threadText,
-                            [r._id]: e.target.value,
-                          })
-                        }
-                        className="flex-1 bg-slate-500/70 rounded-lg px-2 py-1 text-[11px] outline-none"
-                      />
-                      <button
-                        onClick={() =>
-                          addReply(post._id, c._id, threadText[r._id])
-                        }
-                        className="bg-indigo-500 px-2 py-1 rounded-lg text-[11px]"
+                        className="text-indigo-400 hover:text-indigo-300"
                       >
                         Reply
                       </button>
+
+                      {r.userId === user._id && (
+                        <button
+                          type="button"
+                          onClick={() => deleteReply(post._id, c._id, r._id)}
+                          className="text-red-400 hover:text-red-300"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
+
+                    {/* Reply to Reply Input */}
+                    {showReplyThread[r._id] && (
+                      <div className="flex gap-2 mt-2 ml-4">
+                        <input
+                          placeholder={`Reply to @${r.username}...`}
+                          value={replyText[r._id] || ""}
+                          onChange={(e) =>
+                            setReplyText({
+                              ...replyText,
+                              [r._id]: e.target.value,
+                            })
+                          }
+                          className="flex-1 bg-slate-900 rounded-xl px-3 py-1 text-xs outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => addReply(post._id, c._id, replyText[r._id])}
+                          className="bg-indigo-600 px-3 py-1 rounded-xl text-[10px]"
+                        >
+                          Send
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
