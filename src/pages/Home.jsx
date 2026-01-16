@@ -1,7 +1,6 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Home.css";
 import API from "../api";
 
 export default function Home() {
@@ -22,7 +21,7 @@ export default function Home() {
 
   const [showCommentLikes, setShowCommentLikes] = useState({});
   const [showReplyLikes, setShowReplyLikes] = useState({});
-  const [showPostLikes, setShowPostLikes] = useState({}); // 🔥 Added
+  const [showPostLikes, setShowPostLikes] = useState({});
 
   useEffect(() => {
     if (!user) {
@@ -183,52 +182,73 @@ export default function Home() {
     }
   };
 
-  if (loading) return <h3 className="center">Loading...</h3>;
+  if (loading)
+    return (
+      <h3 className="text-center text-white mt-10 text-xl">Loading...</h3>
+    );
 
   return (
-    <div className="home-container">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-black text-white px-3 pb-20">
       {/* HEADER */}
-      <div className="home-header">
-        <h2>Friendzy</h2>
-        <div>
-          <button type="button" onClick={() => navigate("/profile")}>
+      <div className="flex justify-between items-center py-4">
+        <h2 className="text-xl font-bold">Friendzy</h2>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => navigate("/profile")}
+            className="px-4 py-1 rounded-full bg-indigo-600"
+          >
             Profile
           </button>
-          <button type="button" onClick={logout}>
+          <button
+            type="button"
+            onClick={logout}
+            className="px-4 py-1 rounded-full bg-red-600"
+          >
             Logout
           </button>
         </div>
       </div>
 
       {/* CREATE POST */}
-      <div className="create-post">
-        <div className="create-post-header">
-          <div className="create-avatar">
-            <img className="avatar" src={user?.profilePic?.url} alt="" />
-          </div>
-          <div className="create-user-info">
-            <b>{user.username}</b>
-          </div>
+      <div className="bg-slate-800 p-4 rounded-xl shadow-lg mb-5">
+        <div className="flex items-center gap-2 mb-2">
+          <img
+            className="w-10 h-10 rounded-full object-cover"
+            src={user?.profilePic?.url}
+            alt=""
+          />
+          <b>{user.username}</b>
         </div>
 
         <textarea
           placeholder="What's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          className="w-full bg-slate-700 rounded-lg p-3 text-white outline-none resize-none"
         />
 
+        {/* PREVIEW IMAGE / VIDEO */}
         {preview && (
-          <div className="preview-box">
+          <div className="mt-3 rounded-lg overflow-hidden bg-black">
             {image?.type?.startsWith("video") ? (
-              <video src={preview} controls />
+              <video
+                src={preview}
+                controls
+                className="w-full max-h-[70vh] object-contain rounded-lg"
+              />
             ) : (
-              <img src={preview} alt="preview" />
+              <img
+                src={preview}
+                alt="preview"
+                className="w-full max-h-[70vh] object-contain rounded-lg"
+              />
             )}
           </div>
         )}
 
-        <div className="create-actions">
-          <label className="upload-btn">
+        <div className="flex justify-between items-center mt-3">
+          <label className="cursor-pointer text-indigo-400">
             📷 Add Media
             <input
               type="file"
@@ -240,10 +260,10 @@ export default function Home() {
 
           <button
             type="button"
-            className="publish-btn"
             onClick={createPost}
+            className="px-5 py-2 bg-indigo-600 rounded-full"
           >
-            Publish Post
+            Publish
           </button>
         </div>
       </div>
@@ -257,24 +277,30 @@ export default function Home() {
           "";
 
         return (
-          <div key={post._id} className="post-card">
-            <h4>@{post.username}</h4>
-            <p>{post.content}</p>
+          <div
+            key={post._id}
+            className="bg-slate-800 p-4 rounded-xl mb-5 shadow-md"
+          >
+            <h4 className="font-semibold">@{post.username}</h4>
+            <p className="text-sm mt-1">{post.content}</p>
 
+            {/* POST IMAGE WITH INSTAGRAM STYLE SIZE */}
             {imageUrl && (
-              <img
-                src={imageUrl}
-                className="post-image"
-                alt="post"
-                onError={(e) => (e.target.style.display = "none")}
-              />
+              <div className="w-full mt-2 rounded-lg overflow-hidden bg-black">
+                <img
+                  src={imageUrl}
+                  alt="post"
+                  className="w-full max-h-[70vh] object-contain rounded-lg"
+                />
+              </div>
             )}
 
-            {/* 🔥 POST ACTIONS */}
-            <div className="post-actions">
+            {/* POST ACTIONS */}
+            <div className="flex gap-3 mt-2">
               <button
                 type="button"
                 onClick={() => likePost(post._id)}
+                className="text-pink-400"
               >
                 ❤️ {post.likes?.length || 0}
               </button>
@@ -287,21 +313,24 @@ export default function Home() {
                     [post._id]: !showPostLikes[post._id],
                   })
                 }
+                className="text-indigo-400"
               >
                 Who liked?
               </button>
             </div>
 
             {showPostLikes[post._id] && (
-              <div className="likes-box">
+              <div className="bg-black/40 p-2 rounded-lg mt-2 text-sm">
                 {post.likes.map((u, i) => (
-                  <span key={i}>@{u.username}</span>
+                  <span key={i} className="block">
+                    @{u.username}
+                  </span>
                 ))}
               </div>
             )}
 
             {/* COMMENT INPUT */}
-            <div className="comment-box">
+            <div className="flex gap-2 mt-3">
               <input
                 placeholder="Write a comment..."
                 value={commentText[post._id] || ""}
@@ -311,161 +340,62 @@ export default function Home() {
                     [post._id]: e.target.value,
                   })
                 }
+                className="flex-1 bg-slate-700 rounded-lg px-3 py-2 text-white"
               />
               <button
                 type="button"
                 onClick={() => addComment(post._id)}
+                className="bg-indigo-600 px-3 py-2 rounded-lg"
               >
-                Comment
+                Send
               </button>
             </div>
 
             {/* COMMENTS */}
             {post.comments.map((c) => (
-              <div key={c._id} className="comment">
+              <div key={c._id} className="bg-slate-700 p-2 rounded-lg mt-2">
                 <b>@{c.username}</b>
-                <p>{c.text}</p>
+                <p className="text-sm">{c.text}</p>
 
-                <button
-                  type="button"
-                  onClick={() => likeComment(post._id, c._id)}
-                >
-                  ❤️ {c.likes?.length || 0}
-                </button>
+                <div className="flex gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => likeComment(post._id, c._id)}
+                    className="text-pink-400 text-sm"
+                  >
+                    ❤️ {c.likes?.length || 0}
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowCommentLikes({
-                      ...showCommentLikes,
-                      [c._id]: !showCommentLikes[c._id],
-                    })
-                  }
-                >
-                  Who liked?
-                </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowCommentLikes({
+                        ...showCommentLikes,
+                        [c._id]: !showCommentLikes[c._id],
+                      })
+                    }
+                    className="text-indigo-400 text-sm"
+                  >
+                    Who liked?
+                  </button>
+                </div>
 
                 {showCommentLikes[c._id] && (
-                  <div className="likes-box">
+                  <div className="bg-black/40 p-2 rounded-lg mt-2 text-sm">
                     {c.likes.map((u, i) => (
                       <span key={i}>{u}</span>
                     ))}
                   </div>
                 )}
 
-                {c.userId === user._id && (
-                  <button
-                    type="button"
-                    className="delete-btn"
-                    onClick={() => deleteComment(post._id, c._id)}
-                  >
-                    Delete
-                  </button>
-                )}
-
-                {/* REPLY INPUT */}
-                <div className="reply-box">
-                  <input
-                    placeholder="Write a reply..."
-                    value={replyText[c._id] || ""}
-                    onChange={(e) =>
-                      setReplyText({
-                        ...replyText,
-                        [c._id]: e.target.value,
-                      })
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const msg = replyText[c._id];
-                      if (!msg?.trim()) return;
-                      addReply(post._id, c._id, msg);
-                      setReplyText({
-                        ...replyText,
-                        [c._id]: "",
-                      });
-                    }}
-                  >
-                    Reply
-                  </button>
-                </div>
-
                 {/* REPLIES */}
                 {c.replies.map((r) => (
-                  <div key={r._id} className="reply">
+                  <div
+                    key={r._id}
+                    className="ml-4 bg-slate-600 p-2 rounded-lg mt-2"
+                  >
                     <b>@{r.username}</b>
-                    <p>{r.text}</p>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        likeReply(post._id, c._id, r._id)
-                      }
-                    >
-                      ❤️ {r.likes?.length || 0}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowReplyLikes({
-                          ...showReplyLikes,
-                          [r._id]: !showReplyLikes[r._id],
-                        })
-                      }
-                    >
-                      Who liked?
-                    </button>
-
-                    {showReplyLikes[r._id] && (
-                      <div className="likes-box">
-                        {r.likes.map((u, i) => (
-                          <span key={i}>{u}</span>
-                        ))}
-                      </div>
-                    )}
-
-                    {r.userId === user._id && (
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() =>
-                          deleteReply(post._id, c._id, r._id)
-                        }
-                      >
-                        Delete
-                      </button>
-                    )}
-
-                    {/* THREAD REPLY */}
-                    <div className="thread-reply-box">
-                      <input
-                        placeholder={`Reply to @${r.username}...`}
-                        value={threadText[r._id] || ""}
-                        onChange={(e) =>
-                          setThreadText({
-                            ...threadText,
-                            [r._id]: e.target.value,
-                          })
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const msg = threadText[r._id];
-                          if (!msg?.trim()) return;
-                          const text = `@${r.username} ${msg}`;
-                          addReply(post._id, c._id, text);
-                          setThreadText({
-                            ...threadText,
-                            [r._id]: "",
-                          });
-                        }}
-                      >
-                        Reply
-                      </button>
-                    </div>
+                    <p className="text-sm">{r.text}</p>
                   </div>
                 ))}
               </div>

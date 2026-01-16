@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./EditProfile.css";
+import App from "../App";
+import API from "../api";
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function EditProfile() {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState(null); // important: null, not ""
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -49,10 +50,9 @@ export default function EditProfile() {
     if (image) formData.append("image", image);
 
     try {
-      const res = await axios.put(`${AUTH_API}/update-profile`, formData);
+      const res = await API.put(`${AUTH_API}/update-profile`, formData);
 
       if (res.data.success) {
-        // Update localStorage
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/profile");
       } else {
@@ -65,47 +65,72 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="edit-profile-container">
-      <div className="edit-profile-card">
-        <h2>Edit Profile</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-4">
+      <div className="w-full max-w-xl bg-slate-800/80 backdrop-blur-xl p-8 rounded-2xl shadow-2xl">
+        <h2 className="text-2xl md:text-3xl font-bold text-indigo-400 text-center mb-6">
+          Edit Profile
+        </h2>
 
         {/* ================= PROFILE IMAGE ================= */}
-        <div className="image-section">
-          {preview && <img src={preview} alt="Profile" />}
-          <label className="upload-btn">
+        <div className="flex flex-col items-center mb-6">
+          {preview && (
+            <img
+              src={preview}
+              alt="Profile"
+              className="w-28 h-28 rounded-full object-cover border-4 border-indigo-500 shadow-lg"
+            />
+          )}
+
+          <label className="mt-4 cursor-pointer bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition">
             Change Photo
             <input type="file" hidden onChange={handleImageChange} />
           </label>
         </div>
 
         {/* ================= USERNAME ================= */}
-        <div className="form-group">
-          <label>Username</label>
+        <div className="mb-5">
+          <label className="block text-slate-300 text-sm font-semibold mb-1">
+            Username
+          </label>
           <input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter username"
+            className="w-full px-4 py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition"
           />
         </div>
 
         {/* ================= BIO ================= */}
-        <div className="form-group">
-          <label>Bio</label>
+        <div className="mb-6">
+          <label className="block text-slate-300 text-sm font-semibold mb-1">
+            Bio
+          </label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Write something about you..."
             maxLength={150}
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition resize-none"
           />
-          <small>{bio.length}/150</small>
+          <small className="text-slate-400 text-xs block text-right mt-1">
+            {bio.length}/150
+          </small>
         </div>
 
         {/* ================= ACTION BUTTONS ================= */}
-        <div className="edit-actions">
-          <button className="save-btn" onClick={updateProfile}>
+        <div className="flex gap-4">
+          <button
+            onClick={updateProfile}
+            className="flex-1 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-semibold shadow-lg hover:shadow-indigo-500/40 transition"
+          >
             Save Changes
           </button>
-          <button className="cancel-btn" onClick={() => navigate("/profile")}>
+
+          <button
+            onClick={() => navigate("/profile")}
+            className="flex-1 py-3 rounded-full bg-slate-700 text-white font-semibold border border-slate-600 hover:bg-slate-600 transition"
+          >
             Cancel
           </button>
         </div>
