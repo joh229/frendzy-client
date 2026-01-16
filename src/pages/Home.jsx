@@ -1,6 +1,5 @@
 // src/pages/Home.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
 import API from "../api";
@@ -15,6 +14,7 @@ export default function Home() {
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const [commentText, setCommentText] = useState({});
   const [replyText, setReplyText] = useState({});
@@ -22,6 +22,7 @@ export default function Home() {
 
   const [showCommentLikes, setShowCommentLikes] = useState({});
   const [showReplyLikes, setShowReplyLikes] = useState({});
+  const [showPostLikes, setShowPostLikes] = useState({}); // 🔥 Added
 
   useEffect(() => {
     if (!user) {
@@ -52,8 +53,6 @@ export default function Home() {
   };
 
   /* ================= CREATE POST ================= */
-  const [preview, setPreview] = useState(null);
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -89,6 +88,21 @@ export default function Home() {
     }
   };
 
+  /* ================= POST LIKE ================= */
+  const likePost = async (postId) => {
+    const scrollY = window.scrollY;
+    try {
+      await API.put(`${POST_API}/like/${postId}`, {
+        userId: user._id,
+        username: user.username,
+      });
+      await fetchPosts();
+      window.scrollTo(0, scrollY);
+    } catch (err) {
+      console.error("LIKE POST ERROR:", err);
+    }
+  };
+
   /* ================= COMMENT ================= */
   const addComment = async (postId) => {
     if (!commentText[postId]?.trim()) return;
@@ -116,11 +130,13 @@ export default function Home() {
   };
 
   const likeComment = async (postId, commentId) => {
+    const scrollY = window.scrollY;
     try {
       await API.put(`${POST_API}/comment/like/${postId}/${commentId}`, {
         userId: user._id,
       });
-      fetchPosts();
+      await fetchPosts();
+      window.scrollTo(0, scrollY);
     } catch (err) {
       console.error("LIKE COMMENT ERROR:", err);
     }
@@ -154,12 +170,14 @@ export default function Home() {
   };
 
   const likeReply = async (postId, commentId, replyId) => {
+    const scrollY = window.scrollY;
     try {
       await API.put(
         `${POST_API}/reply/like/${postId}/${commentId}/${replyId}`,
         { userId: user._id }
       );
-      fetchPosts();
+      await fetchPosts();
+      window.scrollTo(0, scrollY);
     } catch (err) {
       console.error("LIKE REPLY ERROR:", err);
     }
@@ -173,23 +191,23 @@ export default function Home() {
       <div className="home-header">
         <h2>Friendzy</h2>
         <div>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={logout}>Logout</button>
+          <button type="button" onClick={() => navigate("/profile")}>
+            Profile
+          </button>
+          <button type="button" onClick={logout}>
+            Logout
+          </button>
         </div>
       </div>
 
       {/* CREATE POST */}
-      {/* CREATE POST */}
       <div className="create-post">
-
         <div className="create-post-header">
           <div className="create-avatar">
             <img className="avatar" src={user?.profilePic?.url} alt="" />
-            {/* {user.username.charAt(0).toUpperCase()} */}
           </div>
           <div className="create-user-info">
             <b>{user.username}</b>
-            {/* <span>@{user.username}</span> */}
           </div>
         </div>
 
@@ -199,7 +217,6 @@ export default function Home() {
           onChange={(e) => setContent(e.target.value)}
         />
 
-        {/* PREVIEW */}
         {preview && (
           <div className="preview-box">
             {image?.type?.startsWith("video") ? (
@@ -221,7 +238,11 @@ export default function Home() {
             />
           </label>
 
-          <button className="publish-btn" onClick={createPost}>
+          <button
+            type="button"
+            className="publish-btn"
+            onClick={createPost}
+          >
             Publish Post
           </button>
         </div>
@@ -249,16 +270,54 @@ export default function Home() {
               />
             )}
 
+            {/* 🔥 POST ACTIONS */}
+            <div className="post-actions">
+              <button
+                type="button"
+                onClick={() => likePost(post._id)}
+              >
+                ❤️ {post.likes?.length || 0}
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPostLikes({
+                    ...showPostLikes,
+                    [post._id]: !showPostLikes[post._id],
+                  })
+                }
+              >
+                Who liked?
+              </button>
+            </div>
+
+            {showPostLikes[post._id] && (
+              <div className="likes-box">
+                {post.likes.map((u, i) => (
+                  <span key={i}>@{u.username}</span>
+                ))}
+              </div>
+            )}
+
             {/* COMMENT INPUT */}
             <div className="comment-box">
               <input
                 placeholder="Write a comment..."
                 value={commentText[post._id] || ""}
                 onChange={(e) =>
-                  setCommentText({ ...commentText, [post._id]: e.target.value })
+                  setCommentText({
+                    ...commentText,
+                    [post._id]: e.target.value,
+                  })
                 }
               />
-              <button onClick={() => addComment(post._id)}>Comment</button>
+              <button
+                type="button"
+                onClick={() => addComment(post._id)}
+              >
+                Comment
+              </button>
             </div>
 
             {/* COMMENTS */}
@@ -267,10 +326,15 @@ export default function Home() {
                 <b>@{c.username}</b>
                 <p>{c.text}</p>
 
-                <button onClick={() => likeComment(post._id, c._id)}>
+                <button
+                  type="button"
+                  onClick={() => likeComment(post._id, c._id)}
+                >
                   ❤️ {c.likes?.length || 0}
                 </button>
+
                 <button
+                  type="button"
                   onClick={() =>
                     setShowCommentLikes({
                       ...showCommentLikes,
@@ -291,6 +355,7 @@ export default function Home() {
 
                 {c.userId === user._id && (
                   <button
+                    type="button"
                     className="delete-btn"
                     onClick={() => deleteComment(post._id, c._id)}
                   >
@@ -304,15 +369,22 @@ export default function Home() {
                     placeholder="Write a reply..."
                     value={replyText[c._id] || ""}
                     onChange={(e) =>
-                      setReplyText({ ...replyText, [c._id]: e.target.value })
+                      setReplyText({
+                        ...replyText,
+                        [c._id]: e.target.value,
+                      })
                     }
                   />
                   <button
+                    type="button"
                     onClick={() => {
                       const msg = replyText[c._id];
                       if (!msg?.trim()) return;
                       addReply(post._id, c._id, msg);
-                      setReplyText({ ...replyText, [c._id]: "" });
+                      setReplyText({
+                        ...replyText,
+                        [c._id]: "",
+                      });
                     }}
                   >
                     Reply
@@ -325,10 +397,17 @@ export default function Home() {
                     <b>@{r.username}</b>
                     <p>{r.text}</p>
 
-                    <button onClick={() => likeReply(post._id, c._id, r._id)}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        likeReply(post._id, c._id, r._id)
+                      }
+                    >
                       ❤️ {r.likes?.length || 0}
                     </button>
+
                     <button
+                      type="button"
                       onClick={() =>
                         setShowReplyLikes({
                           ...showReplyLikes,
@@ -349,6 +428,7 @@ export default function Home() {
 
                     {r.userId === user._id && (
                       <button
+                        type="button"
                         className="delete-btn"
                         onClick={() =>
                           deleteReply(post._id, c._id, r._id)
@@ -361,7 +441,7 @@ export default function Home() {
                     {/* THREAD REPLY */}
                     <div className="thread-reply-box">
                       <input
-                        placeholder={`Replat to @${r.username}...`}
+                        placeholder={`Reply to @${r.username}...`}
                         value={threadText[r._id] || ""}
                         onChange={(e) =>
                           setThreadText({
@@ -371,6 +451,7 @@ export default function Home() {
                         }
                       />
                       <button
+                        type="button"
                         onClick={() => {
                           const msg = threadText[r._id];
                           if (!msg?.trim()) return;
