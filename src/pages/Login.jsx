@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
+import API from "../api";
 
 export default function Login() {
   const [email, setEmail] = useState("");

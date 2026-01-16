@@ -28,7 +28,7 @@ export default function Profile() {
     try {
       setLoading(true);
 
-      const res = await API.get(POST_API);
+      const res = await API.get('/posts');
 
       let data = [];
 

@@ -8,7 +8,7 @@ import API from "../api";
 export default function Home() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const POST_API = "/api/posts";
+  const POST_API = "/posts";
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
