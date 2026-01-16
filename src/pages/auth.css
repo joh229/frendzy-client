@@ -13,7 +13,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 12px;
 }
 
 /* ================= AUTH CONTAINER ================= */
@@ -21,25 +21,25 @@ body {
   width: 100%;
   max-width: 450px;
   background: #ffffff;
-  padding: 42px 32px;
-  border-radius: 18px;
+  padding: 44px 34px;
+  border-radius: 20px;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
   text-align: center;
   animation: fadeIn 0.4s ease;
 }
 
-/* ================= TITLE ================= */
+/* Title */
 .auth-container h2 {
   font-size: 28px;
   font-weight: 800;
   color: #4f46e5;
-  margin-bottom: 25px;
-  letter-spacing: 0.6px;
+  margin-bottom: 26px;
+  letter-spacing: 0.5px;
 }
 
-/* ================= ERROR MESSAGE ================= */
+/* Error message */
 .auth-container p {
-  font-size: 13px;
+  font-size: 14px;
   margin-top: 10px;
   color: #dc2626;
 }
@@ -54,30 +54,30 @@ body {
 /* ================= INPUTS ================= */
 .auth-container input {
   width: 100%;
-  padding: 15px 16px;
+  padding: 16px;
   border-radius: 12px;
   border: 1px solid #d1d5db;
   font-size: 16px;
   background: #f9fafb;
   color: #111827;
-  transition: all 0.25s ease;
+  transition: 0.25s;
 }
 
 .auth-container input::placeholder {
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .auth-container input:focus {
   outline: none;
   border-color: #6366f1;
   background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
 }
 
 /* ================= BUTTON ================= */
 .auth-container button {
   width: 100%;
-  padding: 15px;
+  padding: 16px;
   border: none;
   border-radius: 999px;
   background: linear-gradient(135deg, #6366f1, #4f46e5);
@@ -99,7 +99,7 @@ body {
   cursor: not-allowed;
 }
 
-/* ================= BOTTOM TEXT ================= */
+/* Bottom text */
 .auth-container span {
   color: #6366f1;
   cursor: pointer;
@@ -122,31 +122,24 @@ body {
   }
 }
 
-/* ================= MOBILE RESPONSIVE ================= */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   .auth-container {
-    width: 100%;
     max-width: 100%;
     padding: 48px 28px;
-    border-radius: 20px;
   }
 
   .auth-container h2 {
     font-size: 26px;
   }
 
-  .auth-container input {
-    padding: 16px;
-    font-size: 16px;
-  }
-
+  .auth-container input,
   .auth-container button {
-    padding: 16px;
     font-size: 16px;
+    padding: 16px;
   }
 }
 
-/* Very small phones */
 @media (max-width: 420px) {
   .auth-container {
     padding: 44px 22px;
@@ -157,42 +150,49 @@ body {
   }
 }
 
-/* ================= DARK MODE SUPPORT (IMPORTANT) ================= */
-/* Fix invisible typing issue in mobile dark mode */
+/* ================================================= */
+/*  FIX ANDROID DARK MODE INPUT TEXT VISIBILITY BUG  */
+/* ================================================= */
+
 @media (prefers-color-scheme: dark) {
   body {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: linear-gradient(135deg, #020617, #0f172a) !important;
   }
 
   .auth-container {
-    background: #0f172a;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+    background: #0f172a !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
   }
 
   .auth-container h2 {
-    color: #c7d2fe;
-  }
-
-  .auth-container p {
-    color: #f87171;
+    color: #a5b4fc !important;
   }
 
   .auth-container input {
-    background: #1e293b !important;
-    color: #f9fafb !important;
-    border: 1px solid #334155;
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    caret-color: #ffffff !important;
+    border: 1px solid #475569 !important;
   }
 
   .auth-container input::placeholder {
-    color: #94a3b8;
+    color: #94a3b8 !important;
   }
 
   .auth-container button {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: #ffffff;
+    background: linear-gradient(135deg, #818cf8, #6366f1) !important;
   }
 
   .auth-container span {
-    color: #93c5fd;
+    color: #818cf8 !important;
   }
+}
+
+/* Fix Chrome autofill yellow background */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
