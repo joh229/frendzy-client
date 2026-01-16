@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
+import API from "../api";
 
 export default function Profile() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const POST_API = "http://localhost:5000/api/posts";
+  const POST_API = "/posts";
 
   const [posts, setPosts] = useState([]);
   const [myPosts, setMyPosts] = useState([]);
@@ -27,7 +28,7 @@ export default function Profile() {
     try {
       setLoading(true);
 
-      const res = await axios.get(POST_API);
+      const res = await API.get(POST_API);
 
       let data = [];
 

@@ -7,7 +7,7 @@ import "./EditProfile.css";
 export default function EditProfile() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const AUTH_API = "http://localhost:5000/api/auth";
+  const AUTH_API = "/api/auth";
 
   const DEFAULT_AVATAR =
     "https://res.cloudinary.com/demo/image/upload/v1690000000/default-avatar.png";

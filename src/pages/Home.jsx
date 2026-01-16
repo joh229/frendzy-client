@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
+import API from "../api";
 
 export default function Home() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const POST_API = "http://localhost:5000/api/posts";
+  const POST_API = "/api/posts";
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +35,7 @@ export default function Home() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(POST_API);
+      const res = await API.get(POST_API);
       setPosts(res.data.posts || []);
     } catch (err) {
       console.error("FETCH POSTS ERROR:", err);
@@ -78,7 +79,7 @@ export default function Home() {
     if (image) formData.append("image", image);
 
     try {
-      await axios.post(`${POST_API}/create`, formData);
+      await API.post(`${POST_API}/create`, formData);
       setContent("");
       setImage(null);
       setPreview(null);
@@ -93,7 +94,7 @@ export default function Home() {
     if (!commentText[postId]?.trim()) return;
 
     try {
-      await axios.post(`${POST_API}/comment/${postId}`, {
+      await API.post(`${POST_API}/comment/${postId}`, {
         userId: user._id,
         username: user.username,
         text: commentText[postId],
@@ -107,7 +108,7 @@ export default function Home() {
 
   const deleteComment = async (postId, commentId) => {
     try {
-      await axios.delete(`${POST_API}/comment/${postId}/${commentId}`);
+      await API.delete(`${POST_API}/comment/${postId}/${commentId}`);
       fetchPosts();
     } catch (err) {
       console.error("DELETE COMMENT ERROR:", err);
@@ -116,7 +117,7 @@ export default function Home() {
 
   const likeComment = async (postId, commentId) => {
     try {
-      await axios.put(`${POST_API}/comment/like/${postId}/${commentId}`, {
+      await API.put(`${POST_API}/comment/like/${postId}/${commentId}`, {
         userId: user._id,
       });
       fetchPosts();
@@ -130,7 +131,7 @@ export default function Home() {
     if (!text.trim()) return;
 
     try {
-      await axios.post(`${POST_API}/reply/${postId}/${commentId}`, {
+      await API.post(`${POST_API}/reply/${postId}/${commentId}`, {
         userId: user._id,
         username: user.username,
         text,
@@ -143,7 +144,7 @@ export default function Home() {
 
   const deleteReply = async (postId, commentId, replyId) => {
     try {
-      await axios.delete(
+      await API.delete(
         `${POST_API}/reply/delete/${postId}/${commentId}/${replyId}`
       );
       fetchPosts();
@@ -154,7 +155,7 @@ export default function Home() {
 
   const likeReply = async (postId, commentId, replyId) => {
     try {
-      await axios.put(
+      await API.put(
         `${POST_API}/reply/like/${postId}/${commentId}/${replyId}`,
         { userId: user._id }
       );
