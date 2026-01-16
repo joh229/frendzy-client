@@ -13,69 +13,76 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 10px;
 }
 
 /* ================= AUTH CONTAINER ================= */
 .auth-container {
   width: 100%;
-  max-width: 380px;
+  max-width: 450px;
   background: #ffffff;
-  padding: 36px 30px;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  padding: 42px 32px;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
   text-align: center;
   animation: fadeIn 0.4s ease;
 }
 
-/* Title */
+/* ================= TITLE ================= */
 .auth-container h2 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
   color: #4f46e5;
   margin-bottom: 25px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
-/* Error message */
+/* ================= ERROR MESSAGE ================= */
 .auth-container p {
   font-size: 13px;
   margin-top: 10px;
+  color: #dc2626;
 }
 
 /* ================= FORM ================= */
 .auth-container form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
-/* Inputs */
+/* ================= INPUTS ================= */
 .auth-container input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 15px 16px;
+  border-radius: 12px;
   border: 1px solid #d1d5db;
-  font-size: 14px;
+  font-size: 16px;
   background: #f9fafb;
-  transition: 0.25s;
+  color: #111827;
+  transition: all 0.25s ease;
+}
+
+.auth-container input::placeholder {
+  color: #6b7280;
 }
 
 .auth-container input:focus {
   outline: none;
   border-color: #6366f1;
   background: #ffffff;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-/* Button */
+/* ================= BUTTON ================= */
 .auth-container button {
   width: 100%;
-  padding: 12px;
+  padding: 15px;
   border: none;
   border-radius: 999px;
   background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #ffffff;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -88,11 +95,11 @@ body {
 }
 
 .auth-container button:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Bottom text */
+/* ================= BOTTOM TEXT ================= */
 .auth-container span {
   color: #6366f1;
   cursor: pointer;
@@ -115,58 +122,8 @@ body {
   }
 }
 
-/* ================= RESPONSIVE ================= */
-/* Make background mobile friendly */
-body {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #eef2f7, #dfe7f1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-
-/* Bigger default card */
-.auth-container {
-  width: 100%;
-  max-width: 450px;
-  background: #ffffff;
-  padding: 42px 32px;
-  border-radius: 18px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
-  text-align: center;
-}
-
-/* Inputs bigger */
-.auth-container input {
-  width: 100%;
-  padding: 15px 16px;
-  margin: 12px 0;
-  border-radius: 10px;
-  font-size: 16px;
-}
-
-/* Button bigger */
-.auth-container button {
-  width: 100%;
-  padding: 15px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-/* Title */
-.auth-container h2 {
-  font-size: 28px;
-  margin-bottom: 24px;
-}
-
-/* Mobile */
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {
-  body {
-    padding: 15px;
-  }
-
   .auth-container {
     width: 100%;
     max-width: 100%;
@@ -197,5 +154,45 @@ body {
 
   .auth-container h2 {
     font-size: 24px;
+  }
+}
+
+/* ================= DARK MODE SUPPORT (IMPORTANT) ================= */
+/* Fix invisible typing issue in mobile dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+  }
+
+  .auth-container {
+    background: #0f172a;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  .auth-container h2 {
+    color: #c7d2fe;
+  }
+
+  .auth-container p {
+    color: #f87171;
+  }
+
+  .auth-container input {
+    background: #1e293b !important;
+    color: #f9fafb !important;
+    border: 1px solid #334155;
+  }
+
+  .auth-container input::placeholder {
+    color: #94a3b8;
+  }
+
+  .auth-container button {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
+  }
+
+  .auth-container span {
+    color: #93c5fd;
   }
 }
