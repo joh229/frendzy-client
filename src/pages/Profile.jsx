@@ -1,7 +1,7 @@
 // src/pages/Profile.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+import API from "./api";
 
 export default function Profile() {
   const navigate = useNavigate();

@@ -1,13 +1,12 @@
 // src/pages/EditProfile.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+import API from "./api";
 
 export default function EditProfile() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // IMPORTANT FIX: Do NOT add /api here because api.js already has /api in baseURL
   const AUTH_API = "/auth";
 
   const DEFAULT_AVATAR =
@@ -31,17 +30,11 @@ export default function EditProfile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
-
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-    }
+    if (file) setPreview(URL.createObjectURL(file));
   };
 
   const updateProfile = async () => {
-    if (!username.trim()) {
-      return alert("Username cannot be empty");
-    }
+    if (!username.trim()) return alert("Username cannot be empty");
 
     const formData = new FormData();
     formData.append("userId", user._id);
@@ -51,7 +44,6 @@ export default function EditProfile() {
 
     try {
       const res = await API.put(`${AUTH_API}/update-profile`, formData);
-
       if (res.data.success) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         navigate("/profile");
@@ -65,8 +57,9 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-black px-3 sm:px-6 py-10">
-      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-slate-800/80 backdrop-blur-xl p-5 sm:p-8 rounded-2xl shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black pb-20">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto bg-slate-800/80 backdrop-blur-xl p-5 sm:p-8 rounded-2xl shadow-2xl">
+
         <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-400 text-center mb-6">
           Edit Profile
         </h2>
@@ -96,7 +89,7 @@ export default function EditProfile() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter username"
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition text-sm sm:text-base"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition"
           />
         </div>
 
@@ -111,7 +104,7 @@ export default function EditProfile() {
             placeholder="Write something about you..."
             maxLength={150}
             rows={4}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition resize-none text-sm sm:text-base"
+            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-slate-700 text-white placeholder-slate-400 outline-none border border-slate-600 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 transition resize-none"
           />
           <small className="text-slate-400 text-xs block text-right mt-1">
             {bio.length}/150
@@ -121,21 +114,20 @@ export default function EditProfile() {
         {/* ACTION BUTTONS */}
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
-            type="button"
             onClick={updateProfile}
-            className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white text-sm sm:text-base font-semibold shadow-lg hover:shadow-indigo-500/40 transition"
+            className="w-full py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white font-semibold shadow-lg"
           >
             Save Changes
           </button>
 
           <button
-            type="button"
             onClick={() => navigate("/profile")}
-            className="w-full py-2.5 sm:py-3 rounded-full bg-slate-700 text-white text-sm sm:text-base font-semibold border border-slate-600 hover:bg-slate-600 transition"
+            className="w-full py-2.5 sm:py-3 rounded-full bg-slate-700 text-white border border-slate-600"
           >
             Cancel
           </button>
         </div>
+
       </div>
     </div>
   );
