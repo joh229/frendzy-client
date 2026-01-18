@@ -34,9 +34,7 @@ export default function Home() {
   const [storyPreview, setStoryPreview] = useState(null);
   const [stories, setStories] = useState([]);
   const [activeStory, setActiveStory] = useState(null);
-  const myStory = stories.find(
-    (s) => String(s.userId) === String(user._id)
-  );
+ 
 
 
   useEffect(() => {
@@ -74,19 +72,22 @@ export default function Home() {
     };
   }, [activeStory]);
 
-// Get only latest story per user
-const uniqueStories = Object.values(
-  stories.reduce((acc, story) => {
-    if (
-      !acc[story.userId] ||
-      new Date(story.createdAt) > new Date(acc[story.userId].createdAt)
-    ) {
-      acc[story.userId] = story;
-    }
-    return acc;
-  }, {})
+  // Get only latest story per user
+  const uniqueStories = Object.values(
+    stories.reduce((acc, story) => {
+      if (
+        !acc[story.userId] ||
+        new Date(story.createdAt) > new Date(acc[story.userId].createdAt)
+      ) {
+        acc[story.userId] = story;
+      }
+      return acc;
+    }, {})
+  );
+// Your own latest story
+const myStory = uniqueStories.find(
+  (s) => String(s.userId) === String(user._id)
 );
-
 
 
 
