@@ -74,6 +74,19 @@ export default function Home() {
     };
   }, [activeStory]);
 
+// Get only latest story per user
+const uniqueStories = Object.values(
+  stories.reduce((acc, story) => {
+    if (
+      !acc[story.userId] ||
+      new Date(story.createdAt) > new Date(acc[story.userId].createdAt)
+    ) {
+      acc[story.userId] = story;
+    }
+    return acc;
+  }, {})
+);
+
 
 
 
@@ -171,24 +184,24 @@ export default function Home() {
   };
 
   /* ================= STORY LIKE ================= */
-const likeStory = async (storyId) => {
-  try {
-    const res = await API.put(`/stories/like/${storyId}`, {
-      userId: user._id,
-    });
+  const likeStory = async (storyId) => {
+    try {
+      const res = await API.put(`/stories/like/${storyId}`, {
+        userId: user._id,
+      });
 
-    // 🔥 Update the currently open story
-    setActiveStory((prev) => ({
-      ...prev,
-      likes: res.data.likes,
-    }));
+      // 🔥 Update the currently open story
+      setActiveStory((prev) => ({
+        ...prev,
+        likes: res.data.likes,
+      }));
 
-    // 🔁 Refresh story list also
-    fetchStories();
-  } catch (err) {
-    console.error("LIKE STORY ERROR:", err);
-  }
-};
+      // 🔁 Refresh story list also
+      fetchStories();
+    } catch (err) {
+      console.error("LIKE STORY ERROR:", err);
+    }
+  };
 
   /* ================= STORY DELETE ================= */
   const deleteStory = async (storyId) => {
@@ -409,7 +422,7 @@ const likeStory = async (storyId) => {
 
       {/* ===== STORIES BAR ===== */}
       <div className="flex gap-4 overflow-x-auto py-3 px-2">
-     
+
         {/* Your Story */}
         <div
           className="flex flex-col items-center shrink-0 cursor-pointer"
@@ -452,7 +465,7 @@ const likeStory = async (storyId) => {
           <p className="text-xs mt-1 text-gray-300">Your story</p>
         </div>
 
-        {stories
+        {uniqueStories
           ?.filter(story => String(story.userId) !== String(user._id))
           .map((story) => (
             <div key={story._id} onClick={() => setActiveStory(story)}
@@ -960,7 +973,7 @@ const likeStory = async (storyId) => {
                         dangerouslySetInnerHTML={{ __html: formatMentions(r.text) }}
                       />
 
-                  \
+                      \
                       {/* Reply Actions */}
                       <div className="flex gap-3 text-[10px] mt-1">
                         <button
